@@ -1,7 +1,7 @@
 'use client';
-import { useUser } from "./lib/auth";
+import { useUser } from "../lib/auth";
 import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
-import { auth } from './lib/firebase';
+import { auth } from '../lib/firebase';
 import { useState } from 'react';
 
 export default function HomePage() {
