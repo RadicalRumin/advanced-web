@@ -1,12 +1,12 @@
 import { Transaction } from '@/app/boekjes/[id]/page';
-import { db } from './firebase';
+import { auth, db } from './firebase';
 import {
   collection,
   addDoc,
   getDocs,
+  collectionGroup,
   query,
   where,
-
   doc,
   orderBy,
   deleteDoc,
@@ -55,3 +55,24 @@ export async function getTransactions(boekjeId: string, month : Date) {
 export async function deleteTransaction(boekjeId: string, transactionId : string) {
   await deleteDoc(doc(db, `boekjes/${boekjeId}/transactions/${transactionId}`));
 };
+
+
+export async function getAllUserTransactionsViaBoekjes(month: Date) {
+  const user = auth.currentUser;
+  if (!user) throw new Error('Niet ingelogd');
+
+  
+  const boekjesSnapshot = await getDocs(
+    query(collectionGroup(db, 'boekjes'), where('eigenaarId', '==', user.uid))
+  );
+  const boekjeIds = boekjesSnapshot.docs.map((doc) => doc.id);
+
+  const alleTransacties = [];
+
+  for (const boekjeId of boekjeIds) {
+    const transacties = await getTransactions(boekjeId, month);
+    alleTransacties.push(...transacties);
+  }
+
+  return alleTransacties;
+}

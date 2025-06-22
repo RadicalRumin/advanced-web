@@ -15,7 +15,7 @@ export type Category = {
   id: string;
   naam: string;
   omschrijving: string;
-  max?: number;
+  max: number;
   einddatum?: string;
 }
 
