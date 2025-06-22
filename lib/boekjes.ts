@@ -8,6 +8,7 @@ import {
   Timestamp,
   updateDoc,
   doc,
+  onSnapshot,
 } from 'firebase/firestore';
 
 export async function getBoekjesByUser(userId: string) {
@@ -42,5 +43,17 @@ export async function updateBoekje(id: string, naam: string, omschrijving: strin
   await updateDoc(doc(db, 'boekjes', id), {
     naam,
     omschrijving,
+  });
+}
+
+export function subscribeToBoekjes(userId: string, gearchiveerd: boolean, callback: (data: any[]) => void) {
+  const q = query(
+    collection(db, 'boekjes'),
+    where('eigenaarId', '==', userId),
+    where('gearchiveerd', '==', gearchiveerd)
+  );
+  return onSnapshot(q, (snapshot) => {
+    const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    callback(data);
   });
 }

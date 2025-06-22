@@ -1,11 +1,9 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useUser } from '@/lib/auth';
-import { addBoekje, archiveerBoekje, updateBoekje } from '@/lib/boekjes';
+import { addBoekje, archiveerBoekje, updateBoekje, subscribeToBoekjes } from '@/lib/boekjes';
 import BoekjeForm from '@/components/BoekjeForm';
 import BoekjeList from '@/components/BoekjeList';
-import { collection, onSnapshot, query, where } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
 
 export default function BoekjesPage() {
   const user = useUser();
@@ -13,15 +11,7 @@ export default function BoekjesPage() {
 
   useEffect(() => {
     if (!user) return;
-    const q = query(
-      collection(db, 'boekjes'),
-      where('eigenaarId', '==', user.uid),
-      where('gearchiveerd', '==', false)
-    );
-    const unsub = onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setBoekjes(data);
-    });
+    const unsub = subscribeToBoekjes(user.uid, false, setBoekjes);
     return () => unsub();
   }, [user]);
 

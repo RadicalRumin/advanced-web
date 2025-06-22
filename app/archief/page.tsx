@@ -1,11 +1,9 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useUser } from '@/lib/auth';
-import { herstelBoekje } from '@/lib/boekjes';
+import { herstelBoekje, subscribeToBoekjes } from '@/lib/boekjes';
 import BoekjeList from '@/components/BoekjeList';
 import { useRouter } from 'next/navigation';
-import { query, collection, where, onSnapshot } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
 
 export default function ArchiefPage() {
   const user = useUser();
@@ -14,15 +12,7 @@ export default function ArchiefPage() {
 
   useEffect(() => {
     if (!user) return;
-    const q = query(
-      collection(db, 'boekjes'),
-      where('eigenaarId', '==', user.uid),
-      where('gearchiveerd', '==', true)
-    );
-    const unsub = onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setBoekjes(data);
-    });
+    const unsub = subscribeToBoekjes(user.uid, true, setBoekjes);
     return () => unsub();
   }, [user]);
 
