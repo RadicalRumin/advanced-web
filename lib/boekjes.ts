@@ -37,3 +37,10 @@ export async function herstelBoekje(id: string) {
     gearchiveerd: false,
   });
 }
+
+export async function updateBoekje(id: string, naam: string, omschrijving: string) {
+  await updateDoc(doc(db, 'boekjes', id), {
+    naam,
+    omschrijving,
+  });
+}

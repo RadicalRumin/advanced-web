@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useUser } from '@/lib/auth';
-import { getBoekjesByUser, addBoekje, archiveerBoekje } from '@/lib/boekjes';
+import { getBoekjesByUser, addBoekje, archiveerBoekje, updateBoekje } from '@/lib/boekjes';
 import BoekjeForm from '@/components/BoekjeForm';
 import BoekjeList from '@/components/BoekjeList';
 
@@ -28,6 +28,11 @@ export default function BoekjesPage() {
     laadBoekjes();
   }
 
+  async function handleUpdate(id: string, naam: string, omschrijving: string) {
+    await updateBoekje(id, naam, omschrijving);
+    laadBoekjes();
+  }
+
   useEffect(() => {
     laadBoekjes();
   }, [user]);
@@ -38,7 +43,7 @@ export default function BoekjesPage() {
     <div>
       <h1 className="text-2xl font-bold mb-4">Mijn Huishoudboekjes</h1>
       <BoekjeForm onSubmit={handleAdd} />
-      <BoekjeList boekjes={boekjes} onArchive={handleArchive} />
+      <BoekjeList boekjes={boekjes} onArchive={handleArchive} onUpdate={handleUpdate} />
     </div>
   );
 }
