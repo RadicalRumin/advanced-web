@@ -49,7 +49,7 @@ export async function getCategory(userId : string, id: string) {
 
 export async function getCategories(userId: string) {
   const snapshot = await getDocs(
-    query(collection(db, 'categorieen'), where('eigenaarId', '==', userId))
+    query(collection(db, 'categories'), where('eigenaarId', '==', userId))
   );
   return snapshot.docs.map((doc) => ({
     id: doc.id,
