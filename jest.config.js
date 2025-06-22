@@ -8,5 +8,6 @@ module.exports = {
   moduleFileExtensions: ['ts', 'tsx', 'js'],
   collectCoverage: true,
   collectCoverageFrom: ['lib/**/*.ts'],
+  coveragePathIgnorePatterns: ['<rootDir>/lib/firebase.ts'],
   coverageDirectory: 'coverage',
 };
