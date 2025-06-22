@@ -4,12 +4,12 @@ import {
   collection,
   addDoc,
   getDocs,
-  collectionGroup,
   query,
   where,
   doc,
   orderBy,
   deleteDoc,
+  collectionGroup,
 } from 'firebase/firestore';
 
 
@@ -56,12 +56,11 @@ export async function deleteTransaction(boekjeId: string, transactionId : string
   await deleteDoc(doc(db, `boekjes/${boekjeId}/transactions/${transactionId}`));
 };
 
-
 export async function getAllUserTransactionsViaBoekjes(month: Date) {
   const user = auth.currentUser;
   if (!user) throw new Error('Niet ingelogd');
 
-  
+
   const boekjesSnapshot = await getDocs(
     query(collectionGroup(db, 'boekjes'), where('eigenaarId', '==', user.uid))
   );
@@ -74,5 +73,5 @@ export async function getAllUserTransactionsViaBoekjes(month: Date) {
     alleTransacties.push(...transacties);
   }
 
-  return alleTransacties;
+  return alleTransacties as Transaction[];
 }

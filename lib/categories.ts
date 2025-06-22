@@ -46,7 +46,7 @@ export async function getCategory(userId : string, id: string) {
   } as Category;
 }
 
-export async function getCategories(userId : string) {
+export async function getCategories() {
   const snapshot = await getDocs(categorieCollection);
   return snapshot.docs.map((doc) => ({
     id: doc.id,
@@ -88,4 +88,12 @@ export async function updateCategorie(
 export async function deleteCategorie(id: string) {
   const ref = doc(db, 'categories', id); // was 'categories'
   await deleteDoc(ref);
+}
+
+export async function getTotalBudgetForCategories() {
+  const result = await getCategories();
+
+
+
+
 }
