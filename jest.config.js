@@ -1,9 +1,13 @@
 module.exports = {
   preset: 'ts-jest',
-  testEnvironment: 'jsdom',
-  moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/$1',
-  },
+  testEnvironment: 'node',
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
-  testPathIgnorePatterns: ['<rootDir>/.next/', '<rootDir>/node_modules/'],
+  transform: {
+    '^.+\\.tsx?$': 'ts-jest',
+  },
+  moduleFileExtensions: ['ts', 'tsx', 'js'],
+  collectCoverage: true,
+  collectCoverageFrom: ['lib/**/*.ts'],
+  coveragePathIgnorePatterns: ['<rootDir>/lib/firebase.ts'],
+  coverageDirectory: 'coverage',
 };
