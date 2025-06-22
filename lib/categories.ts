@@ -3,6 +3,7 @@ import {
   collection,
   addDoc,
   doc,
+  where,
   updateDoc,
   deleteDoc,
   onSnapshot,
@@ -30,7 +31,7 @@ export function subscribeToCategories(
       id: doc.id,
       ...doc.data(),
     }));
-    callback(data as any); // of een expliciet type cast als nodig
+    callback(data as any); 
   });
 }
 
@@ -46,13 +47,16 @@ export async function getCategory(userId : string, id: string) {
   } as Category;
 }
 
-export async function getCategories() {
-  const snapshot = await getDocs(categorieCollection);
+export async function getCategories(userId: string) {
+  const snapshot = await getDocs(
+    query(collection(db, 'categorieen'), where('eigenaarId', '==', userId))
+  );
   return snapshot.docs.map((doc) => ({
     id: doc.id,
     ...doc.data(),
-  })) as Category[]
-}
+  })) as Category[];
+} 
+
 export async function addCategorie(
   naam: string,
   omschrijving: string,
@@ -76,7 +80,7 @@ export async function updateCategorie(
   max?: number,
   einddatum?: string | null
 ) {
-  const ref = doc(db, 'categories', id); // was 'categories'
+  const ref = doc(db, 'categories', id);
   await updateDoc(ref, {
     naam,
     omschrijving,
@@ -86,14 +90,6 @@ export async function updateCategorie(
 }
 
 export async function deleteCategorie(id: string) {
-  const ref = doc(db, 'categories', id); // was 'categories'
+  const ref = doc(db, 'categories', id); 
   await deleteDoc(ref);
-}
-
-export async function getTotalBudgetForCategories() {
-  const result = await getCategories();
-
-
-
-
 }
