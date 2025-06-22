@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useUser } from '@/lib/auth';
-import { getBoekjesByUser, herstelBoekje } from '@/lib/boekjes';
+import { herstelBoekje } from '@/lib/boekjes';
 import BoekjeList from '@/components/BoekjeList';
 import { useRouter } from 'next/navigation';
 import { query, collection, where, getDocs } from 'firebase/firestore';
