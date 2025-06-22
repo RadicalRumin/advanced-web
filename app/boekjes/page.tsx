@@ -1,41 +1,43 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useUser } from '@/lib/auth';
-import { getBoekjesByUser, addBoekje, archiveerBoekje, updateBoekje } from '@/lib/boekjes';
+import { addBoekje, archiveerBoekje, updateBoekje } from '@/lib/boekjes';
 import BoekjeForm from '@/components/BoekjeForm';
 import BoekjeList from '@/components/BoekjeList';
+import { collection, onSnapshot, query, where } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
 export default function BoekjesPage() {
   const user = useUser();
   const [boekjes, setBoekjes] = useState<any[]>([]);
 
-  async function laadBoekjes() {
-    if (user) {
-      const data = await getBoekjesByUser(user.uid);
+  useEffect(() => {
+    if (!user) return;
+    const q = query(
+      collection(db, 'boekjes'),
+      where('eigenaarId', '==', user.uid),
+      where('gearchiveerd', '==', false)
+    );
+    const unsub = onSnapshot(q, (snapshot) => {
+      const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setBoekjes(data);
-    }
-  }
+    });
+    return () => unsub();
+  }, [user]);
 
   async function handleAdd(naam: string, omschrijving: string) {
     if (user && naam) {
       await addBoekje(naam, omschrijving, user.uid);
-      laadBoekjes();
     }
   }
 
   async function handleArchive(id: string) {
     await archiveerBoekje(id);
-    laadBoekjes();
   }
 
   async function handleUpdate(id: string, naam: string, omschrijving: string) {
     await updateBoekje(id, naam, omschrijving);
-    laadBoekjes();
   }
-
-  useEffect(() => {
-    laadBoekjes();
-  }, [user]);
 
   if (!user) return <p>Even inloggen...</p>;
 

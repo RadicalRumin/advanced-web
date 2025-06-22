@@ -4,35 +4,31 @@ import { useUser } from '@/lib/auth';
 import { herstelBoekje } from '@/lib/boekjes';
 import BoekjeList from '@/components/BoekjeList';
 import { useRouter } from 'next/navigation';
-import { query, collection, where, getDocs } from 'firebase/firestore';
+import { query, collection, where, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-
-async function getGearchiveerdeBoekjes(userId: string) {
-  const q = query(collection(db, 'boekjes'), where('eigenaarId', '==', userId), where('gearchiveerd', '==', true));
-  const snapshot = await getDocs(q);
-  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-}
 
 export default function ArchiefPage() {
   const user = useUser();
   const [boekjes, setBoekjes] = useState<any[]>([]);
   const router = useRouter();
 
-  async function laadBoekjes() {
-    if (user) {
-      const data = await getGearchiveerdeBoekjes(user.uid);
+  useEffect(() => {
+    if (!user) return;
+    const q = query(
+      collection(db, 'boekjes'),
+      where('eigenaarId', '==', user.uid),
+      where('gearchiveerd', '==', true)
+    );
+    const unsub = onSnapshot(q, (snapshot) => {
+      const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setBoekjes(data);
-    }
-  }
+    });
+    return () => unsub();
+  }, [user]);
 
   async function handleHerstel(id: string) {
     await herstelBoekje(id);
-    laadBoekjes();
   }
-
-  useEffect(() => {
-    laadBoekjes();
-  }, [user]);
 
   if (!user) return <p>Even inloggen...</p>;
 
