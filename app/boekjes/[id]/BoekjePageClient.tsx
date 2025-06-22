@@ -105,7 +105,7 @@ export default function BoekjePageClient({ id }: BoekjePageProps) {
 
             <div className="flex justify-around">
                 <BalanceHistoryLineChart transactions={transactions} />
-                <ExpensesBarChart />
+                <ExpensesBarChart transactions={transactions}/>
             </div>
 
 
