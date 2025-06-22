@@ -8,6 +8,8 @@ import { calculateBalance, calculateTotals } from "@/lib/core/statistics";
 import { addTransaction, deleteTransaction, getTransactions } from "@/lib/uitgaven";
 import { useEffect, useState } from "react";
 import { Transaction } from "./page";
+import BalanceHistoryLineChart from "@/components/transactions/BalanceHistoryLineChart";
+import ExpensesBarChart from "@/components/transactions/ExpensesBarChart";
 
 
 
@@ -16,7 +18,6 @@ type BoekjePageProps = {
 };
 
 export default function BoekjePageClient({ id }: BoekjePageProps) {
-    console.log(id);
     const [transactions, setTransactions] = useState<Transaction[]>([]);
     const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
     const [isLoading, setIsLoading] = useState(true);
@@ -41,8 +42,6 @@ export default function BoekjePageClient({ id }: BoekjePageProps) {
     const balance = calculateBalance(transactions);
 
     async function handleAddTransaction(transaction : Transaction) {
-
-
         try {
             const newTransaction = await addTransaction(id, transaction);
             setTransactions(prev => [...prev, newTransaction]);
@@ -70,6 +69,12 @@ export default function BoekjePageClient({ id }: BoekjePageProps) {
                 expenses={expenses}
                 balance={balance}
             />
+
+            <div className="flex justify-around">
+                <BalanceHistoryLineChart transactions={transactions} />
+                <ExpensesBarChart />
+            </div>
+
 
             <AddTransaction onSubmit={handleAddTransaction} />
 

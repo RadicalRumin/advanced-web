@@ -20,7 +20,7 @@ export default function TransactionList({ transactions, onDelete } : Transaction
         <div className="mb-6">
             <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">Transactions</h2>
             <div className="overflow-x-auto">
-                <table className="min-w-full bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow">
+                <table className="min-w-full dark:bg-gray-800 rounded-lg overflow-hidden shadow">
                     <thead className="bg-gray-100 dark:bg-gray-700">
                         <tr>
                             <th className="py-3 px-4 text-left text-gray-800 dark:text-gray-200">Date</th>
@@ -32,7 +32,7 @@ export default function TransactionList({ transactions, onDelete } : Transaction
                     </thead>
                     <tbody>
                         {transactions.map((transaction) => (
-                            <tr key={transaction.id} className="border-b hover:bg-gray-50">
+                            <tr key={transaction.id ?? "oops"} className="border-b hover:bg-gray-600">
                                 <td className="py-3 px-4 text-gray-800 dark:text-gray-200">{new Date(transaction.date).toLocaleDateString()}</td>
                                 <td className="py-3 px-4 text-gray-800 dark:text-gray-200">{transaction.type}</td>
                                 <td className="py-3 px-4 text-gray-800 dark:text-gray-200">{transaction.category}</td>
@@ -42,8 +42,8 @@ export default function TransactionList({ transactions, onDelete } : Transaction
                                 </td>
                                 <td className="py-3 px-4">
                                     <button
-                                        onClick={() => onDelete(transaction.id ?? "shit")}
-                                        className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
+                                        onClick={() => onDelete(transaction.id ?? "oops")}
+                                        className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 cursor-pointer"
                                     >
                                         Delete
                                     </button>

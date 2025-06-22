@@ -9,10 +9,10 @@ export type Transaction = {
 };
 
 type BoekjePageProps = {
-    id: string;
+    params: Promise<{ id: string }>;
 };
 
-export default function BoekjePage({ id }: BoekjePageProps) {
-    console.log(id);
+export default async function BoekjePage({ params }: BoekjePageProps) {
+    const { id } = await params
     return <BoekjePageClient id={id} />;
 }

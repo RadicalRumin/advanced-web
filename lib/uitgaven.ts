@@ -22,8 +22,8 @@ export async function addTransaction(boekjeId : string, transaction : Transactio
     createdAt: Date.now()
   }
   const docref = await addDoc(collect, item);
-
-  return { docref, ...transaction };
+  const id = docref.id;
+  return { id, ...transaction };
 };
 
 export async function getTransactions(boekjeId: string, month : Date) {
