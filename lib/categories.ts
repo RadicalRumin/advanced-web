@@ -9,10 +9,16 @@ import {
   query
 } from 'firebase/firestore';
 
-const categorieCollection = collection(db, 'categorieen');
+const categorieCollection = collection(db, 'categories');
 
-export function subscribeToCategorieen(
-  callback: (categorieën: { id: string; naam: string; omschrijving: string }[]) => void
+export function subscribeToCategories(
+  callback: (categories: {
+    id: string;
+    naam: string;
+    omschrijving: string;
+    max?: number;
+    einddatum?: string;
+  }[]) => void
 ) {
   const q = query(categorieCollection);
   return onSnapshot(q, (snapshot) => {
@@ -20,25 +26,43 @@ export function subscribeToCategorieen(
       id: doc.id,
       ...doc.data(),
     }));
-    callback(data as { id: string; naam: string; omschrijving: string }[]);
+    callback(data as any); // of een expliciet type cast als nodig
   });
 }
 
-export async function addCategorie(naam: string, omschrijving: string) {
+export async function addCategorie(
+  naam: string,
+  omschrijving: string,
+  max: number | null,
+  einddatum: string | null
+) {
   const docRef = await addDoc(categorieCollection, {
     naam,
     omschrijving,
+    max,
+    einddatum,
     createdAt: new Date().toISOString(),
   });
   return docRef.id;
 }
 
-export async function updateCategorie(id: string, naam: string, omschrijving: string) {
-  const ref = doc(db, 'categorieen', id);
-  await updateDoc(ref, { naam, omschrijving });
+export async function updateCategorie(
+  id: string,
+  naam: string,
+  omschrijving: string,
+  max?: number,
+  einddatum?: string | null
+) {
+  const ref = doc(db, 'categories', id); // was 'categories'
+  await updateDoc(ref, {
+    naam,
+    omschrijving,
+    max: typeof max === 'number' ? max : null,
+    einddatum: einddatum || null
+  });
 }
 
 export async function deleteCategorie(id: string) {
-  const ref = doc(db, 'categorieen', id);
+  const ref = doc(db, 'categories', id); // was 'categories'
   await deleteDoc(ref);
 }
