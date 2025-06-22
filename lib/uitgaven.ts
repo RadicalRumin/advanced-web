@@ -1,3 +1,4 @@
+import { Transaction } from '@/app/boekjes/[id]/page';
 import { db } from './firebase';
 import {
   collection,
@@ -12,33 +13,46 @@ import {
 } from 'firebase/firestore';
 
 
-export const addTransaction = async (userId,  transaction) => {
-  const docRef = await addDoc(
-    collection(db, `users/${userId}/transactions`),
-    {
-      ...transaction,
-      date: transaction.date || new Date().toISOString(),
-      createdAt: new Date().toISOString()
-    }
-  );
-  return { id: docRef.id, ...transaction };
+export async function addTransaction(boekjeId : string, transaction : Transaction) {
+
+  const collect = collection(db, `boekjes/${boekjeId}/transactions`);
+  const item = {
+    ...transaction,
+    date: transaction.date || new Date().toISOString(),
+    createdAt: new Date().toISOString()
+  }
+  const docref = await addDoc(collect, item);
+
+  return { docref, ...transaction };
 };
 
-export const getTransactions = async (userId, month) => {
+export async function getTransactions(boekjeId: string, month : Date) {
   const startDate = new Date(month.getFullYear(), month.getMonth(), 1);
   const endDate = new Date(month.getFullYear(), month.getMonth() + 1, 0);
 
   const q = query(
-    collection(db, `users/${userId}/transactions`),
+    collection(db, `users/${boekjeId}/transactions`),
     where("date", ">=", startDate.toISOString()),
     where("date", "<=", endDate.toISOString()),
     orderBy("date", "desc")
   );
-
   const snapshot = await getDocs(q);
-  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+  return snapshot.docs.map((doc) => {
+    const data = doc.data();
+
+    // Validate and transform data
+    return {
+      id: doc.id,
+      amount: data.amount,
+      type: data.type,
+      category: data.category,
+      date: data.date,
+      createdAt: data.createdAt
+    };
+  });
 };
 
-export const deleteTransaction = async (userId, id) => {
-  await deleteDoc(doc(db, `users/${userId}/transactions/${id}`));
+export async function deleteTransaction(boekjeId: string, transactionId : string) {
+  await deleteDoc(doc(db, `boekjes/${boekjeId}/transactions/${transactionId}`));
 };

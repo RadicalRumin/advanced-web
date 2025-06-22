@@ -20,7 +20,7 @@ export default function MonthSelector ({currentMonth, setCurrentMonth} : MonthSe
                 className="p-2 border rounded"
             />
             <button
-                className="ml-2 px-3 py-2 bg-gray-200 rounded hover:bg-gray-300"
+                className="ml-2 px-3 py-2 rounded bg-blue-500 hover:bg-blue-600"
                 onClick={() => setCurrentMonth(new Date())}
             >
                 Current Month

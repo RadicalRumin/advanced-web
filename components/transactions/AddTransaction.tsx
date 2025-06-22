@@ -46,7 +46,7 @@ export default function AddTransaction({ onSubmit } : AddTransactionProps) {
                         <option value="expense">Expense</option>
                     </select>
                     <input
-                        type="number"
+                        type="text"
                         name="amount"
                         placeholder="Amount"
                         value={form.amount ?? ''}
@@ -66,14 +66,14 @@ export default function AddTransaction({ onSubmit } : AddTransactionProps) {
                     <input
                         type="date"
                         name="date"
-                        value={form.category}
-                        onChange={(e) => setForm({ ...form, category: e.target.value})}
+                        value={form.date}
+                        onChange={(e) => setForm({ ...form, date: e.target.value})}
                         className="p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                     />
                 </div>
                 <button
                     type="submit"
-                    className={`mt-4 px-4 py-2 rounded text-white`}
+                    className={`mt-4 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded dark:bg-blue-600 dark:hover:bg-blue-700`}
                 >
                     Add Transaction
                 </button>
