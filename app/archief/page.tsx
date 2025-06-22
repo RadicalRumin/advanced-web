@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useUser } from '@/lib/auth';
 import { herstelBoekje, subscribeToBoekjes } from '@/lib/boekjes';
-import BoekjeList from '@/components/BoekjeList';
+import BoekjeList from '@/components/Boekjes/BoekjeList';
 import { useRouter } from 'next/navigation';
 
 export default function ArchiefPage() {

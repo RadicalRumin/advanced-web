@@ -2,8 +2,8 @@
 import { useEffect, useState } from 'react';
 import { useUser } from '@/lib/auth';
 import { addBoekje, archiveerBoekje, updateBoekje, subscribeToBoekjes } from '@/lib/boekjes';
-import BoekjeForm from '@/components/BoekjeForm';
-import BoekjeList from '@/components/BoekjeList';
+import BoekjeForm from '@/components/Boekjes/BoekjeForm';
+import BoekjeList from '@/components/Boekjes/BoekjeList';
 
 export default function BoekjesPage() {
   const user = useUser();
