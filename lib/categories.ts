@@ -1,4 +1,4 @@
-import { db } from './firebase';
+import { auth, db } from './firebase';
 import {
   collection,
   addDoc,
@@ -16,6 +16,7 @@ export type Category = {
   id: string;
   naam: string;
   omschrijving: string;
+  eigenaarId: string; // Optional, can be used to filter categories by user
   max: number;
   einddatum?: string;
 }
@@ -60,12 +61,14 @@ export async function getCategories(userId: string) {
 export async function addCategorie(
   naam: string,
   omschrijving: string,
+  eigenaarId: string,
   max: number | null,
   einddatum: string | null
 ) {
   const docRef = await addDoc(categorieCollection, {
     naam,
     omschrijving,
+    eigenaarId,
     max,
     einddatum,
     createdAt: new Date().toISOString(),

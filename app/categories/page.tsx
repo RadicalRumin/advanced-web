@@ -4,16 +4,19 @@ import CategorieList from '@/components/Categories/CategorieList';
 import TotalBudgetChart from '@/components/Categories/TotalBudgetChart';
 import { addCategorie, deleteCategorie, subscribeToCategories, updateCategorie } from '@/lib/categories';
 import { useEffect, useState } from 'react';
+import { useUser } from '@/lib/auth';
 
 interface Categorie {
   id: string;
   naam: string;
   omschrijving: string;
+  eigenaarId: string;
   max: number;
   einddatum?: string;
 }
 
 export default function CategoriesPage() {
+  const user = useUser();
   const [categories, setCategories] = useState<Categorie[]>([]);
 
   useEffect(() => {
@@ -29,7 +32,8 @@ export default function CategoriesPage() {
 
       <CategorieForm
         onSubmit={(naam, omschrijving, max, einddatum) => {
-          addCategorie(naam, omschrijving, max, einddatum);
+          if (!user) return;
+          addCategorie(naam, omschrijving, user.uid, max, einddatum);
         }}
       />
       <CategorieList

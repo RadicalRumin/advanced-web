@@ -56,6 +56,7 @@ export default function BoekjePageClient({ id }: BoekjePageProps) {
                 }
 
                 const data = await getCategories(tenantId);
+                console.log('Fetched categories:', data);
                 setCategories(data);
 
             } catch (error) {
