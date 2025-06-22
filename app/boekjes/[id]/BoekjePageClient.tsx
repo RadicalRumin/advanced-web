@@ -10,6 +10,8 @@ import { useEffect, useState } from "react";
 import { Transaction } from "./page";
 import BalanceHistoryLineChart from "@/components/transactions/BalanceHistoryLineChart";
 import ExpensesBarChart from "@/components/transactions/ExpensesBarChart";
+import { Category, getCategories } from "@/lib/categories";
+import { getUser } from "@/lib/auth";
 
 
 
@@ -18,7 +20,9 @@ type BoekjePageProps = {
 };
 
 export default function BoekjePageClient({ id }: BoekjePageProps) {
+    const user = getUser();
     const [transactions, setTransactions] = useState<Transaction[]>([]);
+    const [categories, setCategories] = useState <Category[]>([]);
     const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
     const [isLoading, setIsLoading] = useState(true);
 
@@ -35,7 +39,36 @@ export default function BoekjePageClient({ id }: BoekjePageProps) {
             }
         };
 
+        const fetchCategories = async () => {
+            setIsLoading(true);
+
+            if(!user) {
+                setCategories([]);
+                return;
+            }
+
+            try {
+                const tenantId = user?.uid
+
+                if(tenantId === undefined){
+                    setCategories([]);
+                    return;
+                }
+
+                const data = await getCategories(tenantId);
+                setCategories(data);
+
+            } catch (error) {
+                console.error('Failed to fetch transactions:', error);
+            } finally {
+                setIsLoading(false);
+            }
+        }
+
+        fetchCategories();
         fetchTransactions();
+
+
     }, [ currentMonth]);
 
     const { income, expenses } = calculateTotals(transactions);
@@ -76,7 +109,10 @@ export default function BoekjePageClient({ id }: BoekjePageProps) {
             </div>
 
 
-            <AddTransaction onSubmit={handleAddTransaction} />
+            <AddTransaction
+                onSubmit={handleAddTransaction}
+                categories={categories}
+            />
 
             <MonthSelector
                 currentMonth={currentMonth}

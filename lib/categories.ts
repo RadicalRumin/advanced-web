@@ -6,19 +6,23 @@ import {
   updateDoc,
   deleteDoc,
   onSnapshot,
-  query
+  query,
+  getDoc,
+  getDocs
 } from 'firebase/firestore';
+
+export type Category = {
+  id: string;
+  naam: string;
+  omschrijving: string;
+  max?: number;
+  einddatum?: string;
+}
 
 const categorieCollection = collection(db, 'categories');
 
 export function subscribeToCategories(
-  callback: (categories: {
-    id: string;
-    naam: string;
-    omschrijving: string;
-    max?: number;
-    einddatum?: string;
-  }[]) => void
+  callback: (categories: Category[]) => void
 ) {
   const q = query(categorieCollection);
   return onSnapshot(q, (snapshot) => {
@@ -30,6 +34,25 @@ export function subscribeToCategories(
   });
 }
 
+export async function getCategory(userId : string, id: string) {
+  const ref = doc(db, 'categories', id);
+  const snapshot = await getDoc(ref);
+  if (!snapshot.exists()) {
+    throw new Error(`Category with ID "${id}" not found`);
+  }
+  return {
+    id: snapshot.id,
+    ...snapshot.data(),
+  } as Category;
+}
+
+export async function getCategories(userId : string) {
+  const snapshot = await getDocs(categorieCollection);
+  return snapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  })) as Category[]
+}
 export async function addCategorie(
   naam: string,
   omschrijving: string,

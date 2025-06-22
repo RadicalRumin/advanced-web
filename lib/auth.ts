@@ -1,4 +1,4 @@
-import { onAuthStateChanged, User } from 'firebase/auth';
+import { onAuthStateChanged, User, getAuth } from 'firebase/auth';
 import { auth } from './firebase';
 import { useEffect, useState } from 'react';
 
@@ -11,4 +11,15 @@ export function useUser(): User | null {
   }, []);
 
   return user;
+}
+
+export function getUser() : User | null {
+  const auth = getAuth();
+  const user = auth.currentUser;
+
+  if (user) {
+    return user;
+  } else {
+    return null;
+  }
 }
