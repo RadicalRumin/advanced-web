@@ -4,7 +4,6 @@ import AddTransaction from "@/components/transactions/AddTransaction";
 import MonthSelector from "@/components/transactions/MonthSelector";
 import StatisticsCards from "@/components/transactions/StatisticsCards";
 import TransactionList from "@/components/transactions/TransactionList";
-import { useUser } from "@/lib/auth";
 import { calculateBalance, calculateTotals } from "@/lib/core/statistics";
 import { addTransaction, deleteTransaction, getTransactions } from "@/lib/uitgaven";
 import { useEffect, useState } from "react";
@@ -13,10 +12,11 @@ import { Transaction } from "./page";
 
 
 type BoekjePageProps = {
-    bookId: string;
+    id: string;
 };
 
-export default function BoekjePageClient({ bookId }: BoekjePageProps) {
+export default function BoekjePageClient({ id }: BoekjePageProps) {
+    console.log(id);
     const [transactions, setTransactions] = useState<Transaction[]>([]);
     const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
     const [isLoading, setIsLoading] = useState(true);
@@ -25,7 +25,7 @@ export default function BoekjePageClient({ bookId }: BoekjePageProps) {
         const fetchTransactions = async () => {
             setIsLoading(true);
             try {
-                const data = await getTransactions(bookId, currentMonth);
+                const data = await getTransactions(id, currentMonth);
                 setTransactions(data);
             } catch (error) {
                 console.error('Failed to fetch transactions:', error);
@@ -44,7 +44,7 @@ export default function BoekjePageClient({ bookId }: BoekjePageProps) {
 
 
         try {
-            const newTransaction = await addTransaction(bookId, transaction);
+            const newTransaction = await addTransaction(id, transaction);
             setTransactions(prev => [...prev, newTransaction]);
         } catch (error) {
             console.error('Failed to add transaction:', error);
@@ -53,7 +53,7 @@ export default function BoekjePageClient({ bookId }: BoekjePageProps) {
 
     async function handleDeleteTransaction(transactionId: string) {
         try {
-            await deleteTransaction(bookId, transactionId);
+            await deleteTransaction(id, transactionId);
             setTransactions(prev => prev.filter(t => t.id !== transactionId));
         } catch (error) {
             console.error('Failed to delete transaction:', error);

@@ -18,8 +18,8 @@ export async function addTransaction(boekjeId : string, transaction : Transactio
   const collect = collection(db, `boekjes/${boekjeId}/transactions`);
   const item = {
     ...transaction,
-    date: transaction.date || new Date().toISOString(),
-    createdAt: new Date().toISOString()
+    date: transaction.date ?? new Date().toISOString(),
+    createdAt: Date.now()
   }
   const docref = await addDoc(collect, item);
 
@@ -28,10 +28,10 @@ export async function addTransaction(boekjeId : string, transaction : Transactio
 
 export async function getTransactions(boekjeId: string, month : Date) {
   const startDate = new Date(month.getFullYear(), month.getMonth(), 1);
-  const endDate = new Date(month.getFullYear(), month.getMonth() + 1, 0);
+  const endDate = new Date(month.getFullYear(), month.getMonth() + 1, 1);
 
   const q = query(
-    collection(db, `users/${boekjeId}/transactions`),
+    collection(db, `boekjes/${boekjeId}/transactions`),
     where("date", ">=", startDate.toISOString()),
     where("date", "<=", endDate.toISOString()),
     orderBy("date", "desc")
@@ -41,7 +41,6 @@ export async function getTransactions(boekjeId: string, month : Date) {
   return snapshot.docs.map((doc) => {
     const data = doc.data();
 
-    // Validate and transform data
     return {
       id: doc.id,
       amount: data.amount,

@@ -13,5 +13,6 @@ type BoekjePageProps = {
 };
 
 export default function BoekjePage({ id }: BoekjePageProps) {
-    return <BoekjePageClient bookId={id} />;
+    console.log(id);
+    return <BoekjePageClient id={id} />;
 }
